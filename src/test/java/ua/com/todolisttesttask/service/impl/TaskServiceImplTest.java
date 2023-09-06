@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.PageRequest;
 import ua.com.todolisttesttask.exception.TaskNotFoundException;
 import ua.com.todolisttesttask.model.Task;
 import ua.com.todolisttesttask.model.User;
@@ -75,10 +76,12 @@ public class TaskServiceImplTest {
 
     @Test
     public void testGetAll() {
-        List<Task> tasks = Collections.singletonList(task);
-        when(taskRepository.findAllByUser_Id(userId)).thenReturn(tasks);
+        PageRequest pageRequest = PageRequest.of(0, 10);
 
-        List<Task> returnedTasks = taskService.getAll(userId);
+        List<Task> tasks = Collections.singletonList(task);
+        when(taskRepository.findAllByUser_Id(userId, pageRequest)).thenReturn(tasks);
+
+        List<Task> returnedTasks = taskService.getAll(userId, pageRequest);
         assertNotNull(returnedTasks);
         assertEquals(tasks, returnedTasks);
     }

@@ -1,5 +1,9 @@
 package ua.com.todolisttesttask.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +17,8 @@ import ua.com.todolisttesttask.service.mapper.RequestDtoMapper;
 import ua.com.todolisttesttask.service.mapper.ResponseDtoMapper;
 
 @RestController
+@Tag(name = "User Operations",
+        description = "Operations related to user registration in the system")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
@@ -20,7 +26,12 @@ public class UserController {
     private final ResponseDtoMapper<UserResponseDto, User> userResponseMapper;
 
     @PostMapping("/register")
-    public UserResponseDto register(@Valid @RequestBody UserRequestDto dto) {
+    @Operation(summary = "Register a new user", description = "Allows user to register in the system")
+    public UserResponseDto register(
+            @Valid
+            @Parameter(description = "User details for registration", required = true,
+                    schema = @Schema(implementation = UserRequestDto.class))
+            @RequestBody UserRequestDto dto) {
         User user = userRequestMapper.mapToModel(dto);
         User registeredUser = userService.create(user);
         return userResponseMapper.mapToDto(registeredUser);

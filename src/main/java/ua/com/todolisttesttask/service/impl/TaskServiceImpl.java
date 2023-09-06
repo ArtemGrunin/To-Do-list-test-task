@@ -2,6 +2,7 @@ package ua.com.todolisttesttask.service.impl;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.com.todolisttesttask.exception.TaskNotFoundException;
@@ -27,8 +28,8 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<Task> getAll(Long userId) {
-        return taskRepository.findAllByUser_Id(userId);
+    public List<Task> getAll(Long userId, PageRequest pageRequest) {
+        return taskRepository.findAllByUser_Id(userId, pageRequest);
     }
 
     @Override

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -17,6 +18,10 @@ import ua.com.todolisttesttask.model.Task;
 import ua.com.todolisttesttask.security.jwt.JwtTokenProvider;
 import ua.com.todolisttesttask.service.TaskService;
 import ua.com.todolisttesttask.service.mapper.impl.TaskMapper;
+import ua.com.todolisttesttask.util.SortService;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -31,6 +36,8 @@ public class TaskControllerTest {
     private TaskController taskController;
     @Mock
     private TaskService taskService;
+    @Mock
+    private SortService sortService;
     @Mock
     private TaskMapper taskMapper;
     @Mock
@@ -67,11 +74,53 @@ public class TaskControllerTest {
 
     @Test
     public void testGetAll() throws Exception {
+        PageRequest pageRequest = PageRequest.of(0, 10);
         List<Task> tasks = List.of(mockTask);
-
-        when(taskService.getAll(userId)).thenReturn(tasks);
+        when(taskService.getAll(userId, pageRequest)).thenReturn(tasks);
 
         mockMvc.perform(get("/tasks"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetAllWithDifferentAmounts() throws Exception {
+        List<Task> tasks = List.of(mockTask);
+        when(taskService.getAll(anyLong(), any())).thenReturn(tasks);
+
+        mockMvc.perform(get("/tasks")
+                        .param("amount", "10"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/tasks")
+                        .param("amount", "50"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetAllWithDifferentPages() throws Exception {
+        List<Task> tasks = List.of(mockTask);
+        when(taskService.getAll(anyLong(), any())).thenReturn(tasks);
+
+        mockMvc.perform(get("/tasks")
+                        .param("page", "1"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/tasks")
+                        .param("page", "5"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetAllWithDifferentSortBy() throws Exception {
+        List<Task> tasks = List.of(mockTask);
+        when(taskService.getAll(anyLong(), any())).thenReturn(tasks);
+
+        mockMvc.perform(get("/tasks")
+                        .param("sortBy", "title"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/tasks")
+                        .param("sortBy", "creationDate"))
                 .andExpect(status().isOk());
     }
 
