@@ -26,7 +26,8 @@ public class UserController {
     private final ResponseDtoMapper<UserResponseDto, User> userResponseMapper;
 
     @PostMapping("/register")
-    @Operation(summary = "Register a new user", description = "Allows user to register in the system")
+    @Operation(summary = "Register a new user",
+            description = "Allows user to register in the system")
     public UserResponseDto register(
             @Valid
             @Parameter(description = "User details for registration", required = true,

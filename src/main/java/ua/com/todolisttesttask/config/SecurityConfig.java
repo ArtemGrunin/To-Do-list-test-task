@@ -3,6 +3,7 @@ package ua.com.todolisttesttask.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -26,6 +27,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/login").permitAll()
                                 .requestMatchers("/register").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/swagger-ui.html",
+                                        "/swagger-ui/**", "/v3/api-docs/**",
+                                        "/swagger-resources/**", "/swagger-ui/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(session ->

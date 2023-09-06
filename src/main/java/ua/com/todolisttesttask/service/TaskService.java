@@ -1,7 +1,6 @@
 package ua.com.todolisttesttask.service;
 
 import java.util.List;
-
 import org.springframework.data.domain.PageRequest;
 import ua.com.todolisttesttask.model.Task;
 
