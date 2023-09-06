@@ -27,14 +27,16 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/login").permitAll()
                                 .requestMatchers("/register").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/swagger-ui.html",
-                                        "/swagger-ui/**", "/v3/api-docs/**",
-                                        "/swagger-resources/**", "/swagger-ui/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/swagger-ui/**",
+                                        "/swagger-ui.html",
+                                        "/v3/api-docs/**",
+                                        "/swagger-resources/**",
+                                        "/swagger.html").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .httpBasic(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .userDetailsService(userDetailsService)
