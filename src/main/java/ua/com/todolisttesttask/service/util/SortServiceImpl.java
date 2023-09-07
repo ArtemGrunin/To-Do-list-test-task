@@ -1,4 +1,4 @@
-package ua.com.todolisttesttask.util;
+package ua.com.todolisttesttask.service.util;
 
 import java.util.ArrayList;
 import java.util.List;

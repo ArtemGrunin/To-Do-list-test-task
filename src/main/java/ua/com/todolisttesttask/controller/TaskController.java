@@ -29,7 +29,7 @@ import ua.com.todolisttesttask.model.Task;
 import ua.com.todolisttesttask.security.jwt.JwtTokenProvider;
 import ua.com.todolisttesttask.service.TaskService;
 import ua.com.todolisttesttask.service.mapper.impl.TaskMapper;
-import ua.com.todolisttesttask.util.SortService;
+import ua.com.todolisttesttask.service.util.SortService;
 
 @RestController
 @RequestMapping("/tasks")

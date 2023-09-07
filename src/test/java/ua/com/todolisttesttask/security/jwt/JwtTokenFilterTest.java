@@ -9,7 +9,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,7 +18,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class JwtTokenFilterTest {
+
+    private static final String VALID_TOKEN = "validToken";
+    private static final String INVALID_TOKEN = "invalidToken";
 
     @Mock
     private JwtTokenProvider jwtTokenProvider;
@@ -39,17 +44,14 @@ public class JwtTokenFilterTest {
 
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
         SecurityContextHolder.clearContext();
     }
 
     @Test
-    public void testDoFilter_ValidToken() throws IOException, ServletException {
-        String token = "validToken";
-
-        when(jwtTokenProvider.resolveToken(httpServletRequest)).thenReturn(token);
-        when(jwtTokenProvider.validateToken(token)).thenReturn(true);
-        when(jwtTokenProvider.getAuthentication(token)).thenReturn(authentication);
+    public void doFilter_ValidToken() throws IOException, ServletException {
+        when(jwtTokenProvider.resolveToken(httpServletRequest)).thenReturn(VALID_TOKEN);
+        when(jwtTokenProvider.validateToken(VALID_TOKEN)).thenReturn(true);
+        when(jwtTokenProvider.getAuthentication(VALID_TOKEN)).thenReturn(authentication);
 
         jwtTokenFilter.doFilter(httpServletRequest, httpServletResponse, filterChain);
 
@@ -59,11 +61,9 @@ public class JwtTokenFilterTest {
     }
 
     @Test
-    public void testDoFilter_InvalidToken() throws IOException, ServletException {
-        String token = "invalidToken";
-
-        when(jwtTokenProvider.resolveToken(httpServletRequest)).thenReturn(token);
-        when(jwtTokenProvider.validateToken(token)).thenReturn(false);
+    public void doFilter_InvalidToken() throws IOException, ServletException {
+        when(jwtTokenProvider.resolveToken(httpServletRequest)).thenReturn(INVALID_TOKEN);
+        when(jwtTokenProvider.validateToken(INVALID_TOKEN)).thenReturn(false);
 
         jwtTokenFilter.doFilter(httpServletRequest, httpServletResponse, filterChain);
 
@@ -72,7 +72,7 @@ public class JwtTokenFilterTest {
     }
 
     @Test
-    public void testDoFilter_NoToken() throws IOException, ServletException {
+    public void doFilter_NoToken() throws IOException, ServletException {
         when(jwtTokenProvider.resolveToken(httpServletRequest)).thenReturn(null);
 
         jwtTokenFilter.doFilter(httpServletRequest, httpServletResponse, filterChain);

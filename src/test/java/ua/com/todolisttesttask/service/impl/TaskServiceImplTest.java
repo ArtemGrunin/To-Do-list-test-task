@@ -7,7 +7,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.data.domain.PageRequest;
 import ua.com.todolisttesttask.exception.TaskNotFoundException;
 import ua.com.todolisttesttask.model.Task;
@@ -22,6 +23,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class TaskServiceImplTest {
 
     @Mock
@@ -39,8 +41,6 @@ public class TaskServiceImplTest {
 
     @BeforeEach
     public void setup() {
-        MockitoAnnotations.openMocks(this);
-
         taskId = 1L;
         userId = 1L;
         when(user.getId()).thenReturn(userId);
@@ -50,7 +50,7 @@ public class TaskServiceImplTest {
     }
 
     @Test
-    public void testAdd() {
+    public void add() {
         when(taskRepository.save(task)).thenReturn(task);
 
         Task returnedTask = taskService.add(task);
@@ -59,7 +59,7 @@ public class TaskServiceImplTest {
     }
 
     @Test
-    public void testGetTaskFound() {
+    public void getTaskFound() {
         when(taskRepository.findByIdAndUser_Id(taskId, userId)).thenReturn(Optional.of(task));
 
         Task returnedTask = taskService.get(taskId, userId);
@@ -68,14 +68,14 @@ public class TaskServiceImplTest {
     }
 
     @Test
-    public void testGetTaskNotFound() {
+    public void getTaskNotFound() {
         when(taskRepository.findByIdAndUser_Id(taskId, userId)).thenReturn(Optional.empty());
 
         assertThrows(TaskNotFoundException.class, () -> taskService.get(taskId, userId));
     }
 
     @Test
-    public void testGetAll() {
+    public void getAll() {
         PageRequest pageRequest = PageRequest.of(0, 10);
 
         List<Task> tasks = Collections.singletonList(task);
@@ -87,7 +87,7 @@ public class TaskServiceImplTest {
     }
 
     @Test
-    public void testUpdateTaskFound() {
+    public void updateTaskFound() {
         when(taskRepository.findByIdAndUser_Id(task.getId(),
                 task.getUser().getId())).thenReturn(Optional.of(task));
         when(taskRepository.save(task)).thenReturn(task);
@@ -98,7 +98,7 @@ public class TaskServiceImplTest {
     }
 
     @Test
-    public void testUpdateTaskNotFound() {
+    public void updateTaskNotFound() {
         when(taskRepository.findByIdAndUser_Id(task.getId(),
                 task.getUser().getId())).thenReturn(Optional.empty());
 
@@ -106,7 +106,7 @@ public class TaskServiceImplTest {
     }
 
     @Test
-    public void testDeleteTaskFound() {
+    public void deleteTaskFound() {
         when(taskRepository.findByIdAndUser_Id(taskId, userId)).thenReturn(Optional.of(task));
 
         taskService.delete(taskId, userId);
@@ -114,7 +114,7 @@ public class TaskServiceImplTest {
     }
 
     @Test
-    public void testDeleteTaskNotFound() {
+    public void deleteTaskNotFound() {
         when(taskRepository.findByIdAndUser_Id(taskId, userId)).thenReturn(Optional.empty());
 
         assertThrows(TaskNotFoundException.class, () -> taskService.delete(taskId, userId));

@@ -5,7 +5,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -21,54 +22,57 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.hamcrest.Matchers.is;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class UserControllerTest {
 
+    private static final String USER_EMAIL = "test@test.com";
+    private static final String USER_PASSWORD = "password";
+
     private MockMvc mockMvc;
+
     @Mock
     private UserService userService;
+
     @Mock
     private RequestDtoMapper<UserRequestDto, User> userRequestMapper;
+
     @Mock
     private ResponseDtoMapper<UserResponseDto, User> userResponseMapper;
+
     @InjectMocks
     private UserController userController;
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
     }
 
     @Test
     void testRegister() throws Exception {
         UserRequestDto requestDto = new UserRequestDto();
-        requestDto.setEmail("test@test.com");
-        requestDto.setPassword("password");
+        requestDto.setEmail(USER_EMAIL);
+        requestDto.setPassword(USER_PASSWORD);
 
         User user = new User();
         user.setId(1L);
-        user.setEmail("test@test.com");
-        user.setPassword("password");
-
-        User registeredUser = new User();
-        registeredUser.setId(1L);
-        registeredUser.setEmail("test@test.com");
-        registeredUser.setPassword("password");
+        user.setEmail(USER_EMAIL);
+        user.setPassword(USER_PASSWORD);
 
         UserResponseDto responseDto = new UserResponseDto();
         responseDto.setId(1L);
-        responseDto.setEmail("test@test.com");
+        responseDto.setEmail(USER_EMAIL);
 
         when(userRequestMapper.mapToModel(requestDto)).thenReturn(user);
-        when(userService.create(user)).thenReturn(registeredUser);
-        when(userResponseMapper.mapToDto(registeredUser)).thenReturn(responseDto);
+        when(userService.create(user)).thenReturn(user);
+        when(userResponseMapper.mapToDto(user)).thenReturn(responseDto);
 
         mockMvc.perform(post("/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1)))
-                .andExpect(jsonPath("$.email", is("test@test.com")));
+                .andExpect(jsonPath("$.email", is(USER_EMAIL)));
     }
 }

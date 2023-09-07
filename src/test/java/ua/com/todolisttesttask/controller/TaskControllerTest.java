@@ -1,13 +1,13 @@
 package ua.com.todolisttesttask.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
-import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -18,8 +18,8 @@ import ua.com.todolisttesttask.model.Task;
 import ua.com.todolisttesttask.security.jwt.JwtTokenProvider;
 import ua.com.todolisttesttask.service.TaskService;
 import ua.com.todolisttesttask.service.mapper.impl.TaskMapper;
-import ua.com.todolisttesttask.util.SortService;
-
+import ua.com.todolisttesttask.service.util.SortService;
+import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
@@ -30,6 +30,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class TaskControllerTest {
 
     @InjectMocks
@@ -48,10 +49,10 @@ public class TaskControllerTest {
     private final Long userId = 1L;
     private final Task mockTask = new Task();
     private final TaskResponseDto mockResponse = new TaskResponseDto();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     public void setup() {
-        MockitoAnnotations.openMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(taskController).build();
 
         when(jwtTokenProvider.resolveToken(request)).thenReturn("mockToken");
@@ -60,7 +61,7 @@ public class TaskControllerTest {
     }
 
     @Test
-    public void testCreate() throws Exception {
+    public void createTask() throws Exception {
         TaskRequestDto mockTaskRequest = new TaskRequestDto();
 
         when(taskMapper.mapToModel(mockTaskRequest, userId)).thenReturn(mockTask);
@@ -68,12 +69,12 @@ public class TaskControllerTest {
 
         mockMvc.perform(post("/tasks")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(mockTaskRequest)))
+                        .content(objectMapper.writeValueAsString(mockTaskRequest)))
                 .andExpect(status().isCreated());
     }
 
     @Test
-    public void testGetAll() throws Exception {
+    public void getAllTasks() throws Exception {
         PageRequest pageRequest = PageRequest.of(0, 10);
         List<Task> tasks = List.of(mockTask);
         when(taskService.getAll(userId, pageRequest)).thenReturn(tasks);
@@ -83,7 +84,7 @@ public class TaskControllerTest {
     }
 
     @Test
-    public void testGetAllWithDifferentAmounts() throws Exception {
+    public void getAllTasksWithDifferentAmounts() throws Exception {
         List<Task> tasks = List.of(mockTask);
         when(taskService.getAll(anyLong(), any())).thenReturn(tasks);
 
@@ -97,7 +98,7 @@ public class TaskControllerTest {
     }
 
     @Test
-    public void testGetAllWithDifferentPages() throws Exception {
+    public void getAllTasksWithDifferentPages() throws Exception {
         List<Task> tasks = List.of(mockTask);
         when(taskService.getAll(anyLong(), any())).thenReturn(tasks);
 
@@ -111,7 +112,7 @@ public class TaskControllerTest {
     }
 
     @Test
-    public void testGetAllWithDifferentSortBy() throws Exception {
+    public void getAllTasksWithDifferentSortBy() throws Exception {
         List<Task> tasks = List.of(mockTask);
         when(taskService.getAll(anyLong(), any())).thenReturn(tasks);
 
@@ -125,7 +126,7 @@ public class TaskControllerTest {
     }
 
     @Test
-    public void testGetTask() throws Exception {
+    public void getTask() throws Exception {
         Long taskId = 1L;
 
         when(taskService.get(taskId, userId)).thenReturn(mockTask);
@@ -135,7 +136,7 @@ public class TaskControllerTest {
     }
 
     @Test
-    public void testUpdateTask() throws Exception {
+    public void updateTask() throws Exception {
         Long taskId = 1L;
         TaskRequestDto requestDto = new TaskRequestDto();
         Task updatedMockTask = new Task();
@@ -147,12 +148,12 @@ public class TaskControllerTest {
 
         mockMvc.perform(put("/tasks/" + taskId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(requestDto)))
+                        .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isOk());
     }
 
     @Test
-    public void testDeleteTask() throws Exception {
+    public void deleteTask() throws Exception {
         Long taskId = 1L;
 
         doNothing().when(taskService).delete(taskId, userId);
