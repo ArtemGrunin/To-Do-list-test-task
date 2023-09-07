@@ -49,10 +49,9 @@ The primary objective of this application is to address the challenge of task ma
 
 1. ✅ Download and install Docker on your machine if you haven't already. Docker is required to create the project's environment. Check out Docker's [official website](https://www.docker.com/) for installation guides.
 2. ✅ Clone the project repository to your local machine.
-3. ✅ Inside the `src/main/resources` directory, copy the `application.properties.sample` file, rename the copy to `application.properties`, and fill in the necessary information (database connection parameters, bot tokens, JWT secret key, etc).
-4. ✅ Create a `.env` file in the root directory of your project and populate it with necessary environment variables. These variables will be used by Docker Compose to setup the application.
-5. ✅ From the root directory of the project, build your application by running the Maven package command: `mvn package`.
-6. ✅ Once the application is built, use the following command to start the services using Docker Compose: `docker-compose up`.
+3. ✅ Inside the `application.properties` fill in the necessary information.
+4. ✅ From the root directory of the project, build your application by running the Maven package command: `mvn package`.
+5. ✅ Once the application is built, use the following command to start the services using Docker Compose: `docker-compose up`.
 
 Please ensure that all necessary configurations are correctly set up before running the application.
 
@@ -113,10 +112,9 @@ Remember, to stop running containers later on, you can use `docker-compose down`
 
 1. ✅ Завантажте та встановіть Docker на ваш комп'ютер, якщо ви ще цього не зробили. Docker необхідний для створення середовища проекту. Дивіться посібники з встановлення на [офіційному сайті](https://www.docker.com/) Docker.
 2. ✅ Клонуйте репозиторій проекту на ваш локальний комп'ютер.
-3. ✅ У директорії `src/main/resources` скопіюйте файл `application.properties.sample`, перейменуйте копію на `application.properties` та введіть необхідну інформацію (параметри підключення до бази даних, токени ботів, секретний ключ JWT тощо).
-4. ✅ Створіть файл `.env` у кореневій директорії вашого проекту та заповніть його необхідними змінними середовища. Ці змінні будуть використовуватися Docker Compose для налаштування додатку.
-5. ✅ З кореневої директорії проекту зібрати ваш застосунок за допомогою команди Maven package: `mvn package`.
-6. ✅ Після збірки застосунку використовуйте наступну команду для запуску служб за допомогою Docker Compose: `docker-compose up`.
+3. ✅ У файлі `application.properties` введіть необхідну інформацію.
+4. ✅ З кореневої директорії проекту зібрати ваш застосунок за допомогою команди Maven package: `mvn package`.
+5. ✅ Після збірки застосунку використовуйте наступну команду для запуску служб за допомогою Docker Compose: `docker-compose up`.
 
 Будь ласка, переконайтеся, що всі необхідні конфігурації правильно налаштовані перед запуском застосунку.
 
